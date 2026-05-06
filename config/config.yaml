@@ -1,0 +1,36 @@
+model:
+  name: tf_efficientnetv2_s
+  num_classes: 5
+  dropout: 0.6
+  img_size: 224
+
+training:
+  batch_size: 32
+  epochs: 25
+  warmup_epochs: 5
+  patience: 10
+  lr: 0.0005
+  weight_decay: 0.0005
+  clip_grad: 1.0
+  mixup_alpha: 0.2
+  seed: 42
+  tta_augs: 5
+
+data:
+  splits_dir: data/processed
+  label_map_path: data/processed/label_num_to_disease_map.json
+  class_weights_path: data/processed/class_weights.json
+
+paths:
+  checkpoint: models/best_model_efficientnetv2_s.pth
+  scripted: models/best_model_scripted_efficientnetv2_s.pt
+  metrics: logs/training_metrics_efficientnetv2_s.csv
+
+wandb:
+  project: cassava-leaf-disease
+  run_name: efficientnetv2_s_224_strong_reg_tta
+
+api:
+  host: 0.0.0.0
+  port: 8000
+  confidence_threshold: 0.7

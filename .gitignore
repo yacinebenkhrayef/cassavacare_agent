@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+
+# Environments
+.env
+.venv/
+env/
+venv/
+
+# Data (never commit raw images)
+data/raw/
+data/external/
+*.csv.gz
+
+# Models (large binary files)
+models/*.pth
+models/*.pt
+# To track model metadata only:
+# models/*.json
+
+# Kaggle credentials
+kaggle.json
+
+# W&B
+wandb/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/*.log
+
+# Build
+dist/
+build/
+*.egg-info/
