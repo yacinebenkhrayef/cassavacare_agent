@@ -26,10 +26,17 @@ streamlit-extras>=0.4.0
 # ── RAG + Agent (Phase 3) ───────────────────────────────────
 langgraph>=0.1.0
 langchain>=0.2.0
+langchain-text-splitters # Added for document chunking
 langchain-anthropic>=0.1.0
 openai>=1.30.0
 qdrant-client>=1.9.0
 sentence-transformers>=2.7.0
+pymupdf                  # Added for PDF extraction (fitz)
+
+# ── Data Scraping & Parsing (Phase 3 Extra) ────────────────
+beautifulsoup4           # Added for HTML parsing
+lxml                     # Added as a fast parser for BeautifulSoup
+biopython                # Added for PubMed API (Entrez)
 
 # ── Weather API (Phase 3) ───────────────────────────────────
 requests>=2.31.0
@@ -40,4 +47,3 @@ pyyaml>=6.0.1
 python-dotenv>=1.0.0
 tqdm>=4.66.0
 rich>=13.7.0
-

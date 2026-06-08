@@ -14,7 +14,7 @@ venv/
 data/raw/
 data/external/
 *.csv.gz
-
+documents/
 # Models (large binary files)
 models/*.pth
 models/*.pt
