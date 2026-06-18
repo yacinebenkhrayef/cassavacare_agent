@@ -28,7 +28,8 @@ langgraph>=0.1.0
 langchain>=0.2.0
 langchain-text-splitters # Added for document chunking
 langchain-anthropic>=0.1.0
-openai>=1.30.0
+google-genai             # Added for Gemini API support
+langchain-google-genai   # Added for LangChain Gemini integration
 qdrant-client>=1.9.0
 sentence-transformers>=2.7.0
 pymupdf                  # Added for PDF extraction (fitz)
