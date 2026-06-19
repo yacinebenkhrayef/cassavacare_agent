@@ -20,3 +20,4 @@ class QueryResponse(BaseModel):
     sources: List[SourceChunk]
     question: str
     chunks_used: int
+    timing_ms: Optional[dict] = None
