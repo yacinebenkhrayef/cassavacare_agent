@@ -12,6 +12,7 @@ from typing import TypedDict, List, Dict, Optional, Literal
 class AgentState(TypedDict, total=False):
     # ---- Input ----
     image_path: str
+    location: str          # NEW (Part 2) — city name typed by the user, e.g. "Tunis,TN"
 
     # ---- Step 1: Diagnosis (EfficientNet + Grad-CAM) ----
     pred_class: int
@@ -30,6 +31,7 @@ class AgentState(TypedDict, total=False):
 
     # ---- Step 4: Weather (STUB in Part 1 — real OpenWeather call in Part 2) ----
     weather: Dict[str, float]
+    weather_error: Optional[str]   # NEW (Part 2) — set only if the API call failed
 
     # ---- Step 5: Decision ----
     decision: Literal["apply", "defer", "avoid_aerial", "no_action_needed", "pending"]

@@ -12,6 +12,7 @@ from src.model import load_model
 from src.gradcam import GradCAMWrapper
 from src.inference import predict
 from src.config import CFG, LABEL_MAP, SHORT_NAMES
+from src.weather_client import OpenWeatherClient, WeatherAPIError
 
 # TODO: adjust this import to match your actual Phase 3 project structure.
 from api.client import CassavaRAGClient
@@ -35,7 +36,7 @@ _device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 _model = load_model(CHECKPOINT_PATH, CFG, device=_device)
 _cam_wrapper = GradCAMWrapper(_model, device=_device, img_size=IMG_SIZE)
 _rag_client = CassavaRAGClient()  # TODO: pass constructor args your Phase 3 client needs
-
+_weather_client = OpenWeatherClient()
 
 # ---------------------------------------------------------------------------
 # Step 1 — Diagnosis (EfficientNet + Grad-CAM)
@@ -127,31 +128,55 @@ def check_disease_status(state: AgentState) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Step 4 — Weather (STUB — replaced by a real OpenWeather call in Part 2)
+# Step 4 — Weather (REAL — Part 2). Same return shape as the Part 1 stub
+# (rain_probability, wind_speed_kmh, forecast_hours), so decision_node
+# (Step 5, unchanged) needs zero modification.
 # ---------------------------------------------------------------------------
 def weather_check_node(state: AgentState) -> dict:
-    """
-    STUB for Phase 4, Part 2.
-    Returns fixed mock values so the decision node (Step 5, already real)
-    can be built and tested now. Part 2 replaces the body of this function
-    with a real OpenWeather API call — the return shape (rain_probability,
-    wind_speed_kmh, forecast_hours) must stay the same so decision_node
-    doesn't need to change.
-    """
-    mock_weather = {
-        "rain_probability": 0.10,   # TODO Part 2: real OpenWeather value
-        "wind_speed_kmh": 8.0,      # TODO Part 2: real OpenWeather value
-        "forecast_hours": 12,
-    }
+    city = state["location"]
+    try:
+        weather = _weather_client.get_forecast(city)
+    except WeatherAPIError as exc:
+        trace_line = f"Étape 4 – Météo indisponible ({city}) : {exc}"
+        return {
+            "weather_error": str(exc),
+            "trace": state.get("trace", []) + [trace_line],
+        }
+
     trace_line = (
-        f"Étape 4 – Météo locale (MOCK) : pluie {mock_weather['rain_probability']*100:.0f}% "
-        f"– Vent {mock_weather['wind_speed_kmh']} km/h [STUB — Partie 2]"
+        f"Étape 4 – Météo locale ({city}) : pluie {weather['rain_probability']*100:.0f}% "
+        f"– Vent {weather['wind_speed_kmh']:.1f} km/h (fenêtre {weather['forecast_hours']}h)"
     )
     return {
-        "weather": mock_weather,
+        "weather": weather,
         "trace": state.get("trace", []) + [trace_line],
     }
 
+
+# ---------------------------------------------------------------------------
+# Routing after weather: send failed lookups to a safety fallback instead
+# of into decision_node (which assumes state["weather"] exists).
+# ---------------------------------------------------------------------------
+def check_weather_status(state: AgentState) -> str:
+    return "unavailable" if state.get("weather_error") else "ok"
+
+
+def weather_fallback_node(state: AgentState) -> dict:
+    """
+    Safety-first fallback when the weather API is unreachable or
+    misconfigured. Agronomic reasoning: it's better to defer a treatment
+    unnecessarily than to apply one during conditions we couldn't verify.
+    """
+    reason = (
+        f"Données météo indisponibles ({state.get('weather_error', 'erreur inconnue')}) "
+        f"— traitement reporté par précaution."
+    )
+    trace_line = f"Étape 5 – Décision (fallback) : {reason}"
+    return {
+        "decision": "defer",
+        "decision_reason": reason,
+        "trace": state.get("trace", []) + [trace_line],
+    }
 
 # ---------------------------------------------------------------------------
 # Step 5 — Decision (fully implemented — business rules from FR5 / §6.3)

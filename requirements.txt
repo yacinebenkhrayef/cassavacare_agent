@@ -40,13 +40,16 @@ lxml                     # Added as a fast parser for BeautifulSoup
 biopython                # Added for PubMed API (Entrez)
 
 # ── Weather API (Phase 3) ───────────────────────────────────
-requests>=2.31.0
+requests>=2.33.1         # Updated to match current project version
 httpx>=0.27.0
 
 # ── Utilities ───────────────────────────────────────────────
-cachetools               # Added for memoization and caching
+cachetools>=7.1.1        # Added for memoization and caching
 pyyaml>=6.0.1
-python-dotenv>=1.0.0
+python-dotenv>=1.2.2     # Updated to match current project version
 tqdm>=4.66.0
 rich>=13.7.0
+
+# ── Testing & Mocking ───────────────────────────────────────
 pytest>=7.4.0
+responses>=0.26.2        # Added for mocking HTTP requests in agent tests
