@@ -52,3 +52,44 @@ def test_weather_fallback_node_defers():
     out = weather_fallback_node(state)
     assert out["decision"] == "defer"
     assert "précaution" in out["decision_reason"]
+
+from unittest.mock import MagicMock, patch
+
+from src.agent.nodes import synthesize_report_node
+from src.llm_client import LLMUnavailableError
+
+
+@patch("src.agent.nodes._llm_client")
+def test_synthesize_report_node_success(mock_llm):
+    mock_llm.generate_synthesis.return_value = "Your cassava plant has CMD..."
+    state = {
+        "pred_disease": "mosaic_disease",
+        "pred_disease_short": "CMD",
+        "confidence": 0.87,
+        "rag_answer": "Apply mancozeb-based fungicide.",
+        "rag_sources": [{"title": "FAO Technical Report 2024"}],
+        "weather": {"rain_probability": 0.1, "wind_speed_kmh": 8.0, "forecast_hours": 24},
+        "decision": "apply",
+        "decision_reason": "Conditions favorables.",
+        "trace": [],
+    }
+    out = synthesize_report_node(state)
+    assert out["final_report"] == "Your cassava plant has CMD..."
+    assert "Gemini" in out["trace"][-1]
+
+
+@patch("src.agent.nodes._llm_client")
+def test_synthesize_report_node_falls_back_on_llm_error(mock_llm):
+    mock_llm.generate_synthesis.side_effect = LLMUnavailableError("Gemini unreachable")
+    state = {
+        "pred_disease": "mosaic_disease",
+        "pred_disease_short": "CMD",
+        "confidence": 0.87,
+        "rag_answer": "Apply mancozeb-based fungicide.",
+        "decision": "apply",
+        "decision_reason": "Conditions favorables.",
+        "trace": [],
+    }
+    out = synthesize_report_node(state)
+    assert out["final_report"].startswith("[Fallback report")
+    assert "indisponible" in out["trace"][-1]

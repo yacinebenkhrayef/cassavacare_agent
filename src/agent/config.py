@@ -37,3 +37,17 @@ WEATHER_MAX_RETRIES: int = 3
 WEATHER_RETRY_BACKOFF_SECONDS: float = 1.0
 WEATHER_LOOKAHEAD_ENTRIES: int = 8       # 8 * 3h = 24h -> FR5's "12-24h" window
 WEATHER_CACHE_TTL_SECONDS: int = 900     # 15 min; forecast itself refreshes ~every 3h
+
+# --- Part 3: Gemini (LLM synthesis) --------------------------------------
+GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL: str = "gemini-2.5-flash"     # free-tier default as of mid-2026;
+                                            # swap to "gemini-2.5-flash-lite"
+                                            # if you hit free-tier rate limits
+GEMINI_MAX_OUTPUT_TOKENS: int = 512        # ~220 words + margin
+GEMINI_TEMPERATURE: float = 0.3            # low — factual report, not creative writing
+GEMINI_MAX_RETRIES: int = 3
+GEMINI_RETRY_BACKOFF_SECONDS: float = 2.0
+
+# --- Part 3: FastAPI upload/job handling ----------------------------------
+UPLOAD_DIR: str = "data/uploads"
+ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png"}   # FR1: JPG, PNG, JPEG

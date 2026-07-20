@@ -1,10 +1,8 @@
 """
-LangGraph node functions for CassavaCare-Agent (Phase 4, Part 1).
+LangGraph node functions for CassavaCare-Agent (Phase 4, Part 3).
 
-Model, Grad-CAM wrapper, and RAG client are loaded once at module import
-time (singleton pattern). In Part 3, when this graph is wrapped by FastAPI,
-this loading moves into a startup event instead of module import — noted
-inline below.
+Model, Grad-CAM wrapper, RAG, Weather, and LLM clients are initialized lazily
+via `initialize_agent_singletons()` during FastAPI app startup or test setups.
 """
 import torch
 
@@ -13,6 +11,8 @@ from src.gradcam import GradCAMWrapper
 from src.inference import predict
 from src.config import CFG, LABEL_MAP, SHORT_NAMES
 from src.weather_client import OpenWeatherClient, WeatherAPIError
+from src.llm_client import GeminiClient, LLMAPIError
+from src.agent.prompts import build_diagnosis_prompt, build_healthy_prompt
 
 # TODO: adjust this import to match your actual Phase 3 project structure.
 from api.client import CassavaRAGClient
@@ -27,16 +27,34 @@ from src.agent.config import (
 )
 from src.agent.state import AgentState
 from src.agent.utils import save_gradcam_overlay, disease_query_text
+
 # ---------------------------------------------------------------------------
-# Module-level singletons — loaded once, reused across every graph invocation.
-# In Part 3 (FastAPI), move this block into an `@app.on_event("startup")`
-# handler and store the objects on `app.state` instead of module globals.
+# Module-level singletons — now lazily created by initialize_agent_singletons(),
+# called once from FastAPI's lifespan handler (src/api/main.py) instead of at
+# module-import time. All node functions below read these same names as
+# module globals — nothing else in this file changes.
 # ---------------------------------------------------------------------------
-_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-_model = load_model(CHECKPOINT_PATH, CFG, device=_device)
-_cam_wrapper = GradCAMWrapper(_model, device=_device, img_size=IMG_SIZE)
-_rag_client = CassavaRAGClient()  # TODO: pass constructor args your Phase 3 client needs
-_weather_client = OpenWeatherClient()
+_device = None
+_model = None
+_cam_wrapper = None
+_rag_client = None
+_weather_client = None
+_llm_client = None
+
+
+def initialize_agent_singletons() -> None:
+    """Idempotent — safe to call more than once (e.g. once per test module).
+    Call this exactly once per process, before the first graph invocation."""
+    global _device, _model, _cam_wrapper, _rag_client, _weather_client, _llm_client
+    if _model is not None:
+        return
+    _device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    _model = load_model(CHECKPOINT_PATH, CFG, device=_device)
+    _cam_wrapper = GradCAMWrapper(_model, device=_device, img_size=IMG_SIZE)
+    _rag_client = CassavaRAGClient()
+    _weather_client = OpenWeatherClient()
+    _llm_client = GeminiClient()
+
 
 # ---------------------------------------------------------------------------
 # Step 1 — Diagnosis (EfficientNet + Grad-CAM)
@@ -99,8 +117,6 @@ def request_new_image_node(state: AgentState) -> dict:
 def retrieve_treatment_node(state: AgentState) -> dict:
     query = disease_query_text(state["pred_disease"])
 
-    # NOTE: verify this against your actual Phase 3 CassavaRAGClient.ask()
-    # return shape — adjust the two field names below if they differ.
     rag_result = _rag_client.ask(query)
     answer = rag_result.get("answer", "")
     sources = rag_result.get("sources", [])
@@ -128,9 +144,7 @@ def check_disease_status(state: AgentState) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Step 4 — Weather (REAL — Part 2). Same return shape as the Part 1 stub
-# (rain_probability, wind_speed_kmh, forecast_hours), so decision_node
-# (Step 5, unchanged) needs zero modification.
+# Step 4 — Weather check
 # ---------------------------------------------------------------------------
 def weather_check_node(state: AgentState) -> dict:
     city = state["location"]
@@ -154,8 +168,7 @@ def weather_check_node(state: AgentState) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Routing after weather: send failed lookups to a safety fallback instead
-# of into decision_node (which assumes state["weather"] exists).
+# Routing after weather
 # ---------------------------------------------------------------------------
 def check_weather_status(state: AgentState) -> str:
     return "unavailable" if state.get("weather_error") else "ok"
@@ -178,8 +191,9 @@ def weather_fallback_node(state: AgentState) -> dict:
         "trace": state.get("trace", []) + [trace_line],
     }
 
+
 # ---------------------------------------------------------------------------
-# Step 5 — Decision (fully implemented — business rules from FR5 / §6.3)
+# Step 5 — Decision
 # ---------------------------------------------------------------------------
 def decision_node(state: AgentState) -> dict:
     weather = state["weather"]
@@ -212,35 +226,45 @@ def decision_node(state: AgentState) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Step 6 — Synthesis (STUB — replaced by a real Gemini call in Part 3)
+# Step 6 — Synthesis (REAL — Part 3). Falls back to a templated report if
+# Gemini is unavailable for any reason, rather than letting the whole graph
+# invocation fail — a farmer should still get *a* report, even a plain one.
 # ---------------------------------------------------------------------------
 def synthesize_report_node(state: AgentState) -> dict:
-    """
-    STUB for Phase 4, Part 3.
-    Assembles the "Affichage explicable" trace into a plain-text report
-    without any LLM call. Part 3 replaces this with a real Gemini prompt
-    that takes the same state fields and produces a natural-language
-    synthesis instead of this templated join.
-    """
     if state["pred_disease"] == "healthy":
-        report = (
-            f"Diagnostic : plante saine (confiance {state['confidence']:.2f}). "
-            f"Aucune action requise."
-        )
-        decision_summary = "no_action_needed"
+        prompt = build_healthy_prompt(state)
     else:
-        report = (
-            f"Diagnostic : {state['pred_disease_short']} "
-            f"(confiance {state['confidence']:.2f}).\n"
-            f"Traitement recommandé : {state.get('rag_answer', 'N/A')}\n"
-            f"Décision météo : {state.get('decision_reason', 'N/A')} [STUB — Partie 3 pour la synthèse LLM]"
-        )
-        decision_summary = state.get("decision", "pending")
+        prompt = build_diagnosis_prompt(state)
 
-    trace_line = "Étape 6 – Rapport généré (gabarit statique, LLM en Partie 3)."
+    try:
+        report = _llm_client.generate_synthesis(prompt)
+        trace_line = "Étape 6 – Rapport de synthèse généré via Gemini."
+    except LLMAPIError as exc:
+        report = _fallback_report(state, str(exc))
+        trace_line = f"Étape 6 – Gemini indisponible ({exc}) – repli sur gabarit statique."
+
+    default_decision = "no_action_needed" if state["pred_disease"] == "healthy" else "pending"
 
     return {
         "final_report": report,
-        "decision": state.get("decision", decision_summary),
+        "decision": state.get("decision", default_decision),
         "trace": state.get("trace", []) + [trace_line],
     }
+
+
+def _fallback_report(state: AgentState, error_message: str) -> str:
+    """Same content as the Part 1 stub, in English, plus an explicit flag so
+    this is never mistaken for a real LLM synthesis in the dashboard (Phase 5)
+    or in a §6.4 UX evaluation."""
+    if state["pred_disease"] == "healthy":
+        return (
+            f"[Fallback report — Gemini unavailable: {error_message}]\n"
+            f"Diagnosis: healthy plant (confidence {state['confidence']:.2f}). "
+            f"No action required."
+        )
+    return (
+        f"[Fallback report — Gemini unavailable: {error_message}]\n"
+        f"Diagnosis: {state['pred_disease_short']} (confidence {state['confidence']:.2f}).\n"
+        f"Recommended treatment: {state.get('rag_answer', 'N/A')}\n"
+        f"Weather-based decision: {state.get('decision_reason', 'N/A')}"
+    )
