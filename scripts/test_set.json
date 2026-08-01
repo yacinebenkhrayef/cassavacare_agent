@@ -1,0 +1,142 @@
+[
+    {
+      "id": "CMD_01",
+      "disease_class": "Cassava Mosaic Disease",
+      "question": "What are the symptoms of cassava mosaic disease?",
+      "relevant_keywords": ["mosaic", "chlorosis", "mottling", "leaf distortion", "cassava mosaic virus", "CMD"],
+      "notes": "Core symptom query — should retrieve highly relevant chunks from FAO and Wikipedia"
+    },
+    {
+      "id": "CMD_02",
+      "disease_class": "Cassava Mosaic Disease",
+      "question": "How is cassava mosaic disease transmitted between plants?",
+      "relevant_keywords": ["whitefly", "Bemisia tabaci", "vector", "transmission", "spread", "mosaic"],
+      "notes": "Transmission mechanism — should retrieve entomology-focused chunks"
+    },
+    {
+      "id": "CMD_03",
+      "disease_class": "Cassava Mosaic Disease",
+      "question": "What resistant cassava varieties are recommended against CMD?",
+      "relevant_keywords": ["resistant variety", "TME", "tolerance", "cultivar", "breeding", "mosaic"],
+      "notes": "Varietal resistance query — should retrieve IITA/CGIAR agronomic chunks"
+    },
+    {
+      "id": "CMD_04",
+      "disease_class": "Cassava Mosaic Disease",
+      "question": "How can cassava mosaic disease be controlled in the field?",
+      "relevant_keywords": ["control", "management", "rogue", "clean planting material", "mosaic", "insecticide"],
+      "notes": "Management/treatment query — broad relevance expected"
+    },
+    {
+      "id": "CBB_01",
+      "disease_class": "Cassava Bacterial Blight",
+      "question": "What are the signs of cassava bacterial blight infection?",
+      "relevant_keywords": ["Xanthomonas", "blight", "wilting", "angular lesion", "exudate", "bacterial"],
+      "notes": "Symptom identification for CBB"
+    },
+    {
+      "id": "CBB_02",
+      "disease_class": "Cassava Bacterial Blight",
+      "question": "How is cassava bacterial blight treated?",
+      "relevant_keywords": ["copper", "bactericide", "treatment", "blight", "Xanthomonas", "control"],
+      "notes": "Treatment query — should retrieve PubMed and FAO chunks"
+    },
+    {
+      "id": "CBB_03",
+      "disease_class": "Cassava Bacterial Blight",
+      "question": "What conditions favor the spread of cassava bacterial blight?",
+      "relevant_keywords": ["humidity", "rain", "wound", "spread", "blight", "Xanthomonas", "environment"],
+      "notes": "Epidemiology query"
+    },
+    {
+      "id": "CBB_04",
+      "disease_class": "Cassava Bacterial Blight",
+      "question": "Can cassava bacterial blight be prevented through cultural practices?",
+      "relevant_keywords": ["cultural", "prevention", "sanitation", "crop rotation", "blight", "clean"],
+      "notes": "Prevention / cultural control"
+    },
+    {
+      "id": "CBSD_01",
+      "disease_class": "Cassava Brown Streak Disease",
+      "question": "What are the symptoms of cassava brown streak disease?",
+      "relevant_keywords": ["brown streak", "necrosis", "chlorotic", "root rot", "CBSD", "tuber"],
+      "notes": "Core symptom query for CBSD"
+    },
+    {
+      "id": "CBSD_02",
+      "disease_class": "Cassava Brown Streak Disease",
+      "question": "How does cassava brown streak virus spread?",
+      "relevant_keywords": ["whitefly", "cutting", "vector", "brown streak", "CBSV", "spread"],
+      "notes": "Transmission mechanism for CBSD"
+    },
+    {
+      "id": "CBSD_03",
+      "disease_class": "Cassava Brown Streak Disease",
+      "question": "What is the economic impact of cassava brown streak disease in Africa?",
+      "relevant_keywords": ["yield loss", "economic", "Africa", "brown streak", "Tanzania", "Uganda"],
+      "notes": "Economic/geographic query — should retrieve FAO and CGIAR reports"
+    },
+    {
+      "id": "CBSD_04",
+      "disease_class": "Cassava Brown Streak Disease",
+      "question": "Are there cassava varieties resistant to brown streak virus?",
+      "relevant_keywords": ["resistance", "variety", "brown streak", "CBSD", "tolerant", "breeding"],
+      "notes": "Varietal resistance for CBSD"
+    },
+    {
+      "id": "CGM_01",
+      "disease_class": "Cassava Green Mottle",
+      "question": "What are the symptoms of cassava green mottle virus?",
+      "relevant_keywords": ["green mottle", "mottling", "chlorosis", "mosaic", "virus", "leaf"],
+      "notes": "Symptom query for CGM — may have fewer corpus hits"
+    },
+    {
+      "id": "CGM_02",
+      "disease_class": "Cassava Green Mottle",
+      "question": "How is cassava green mottle disease managed?",
+      "relevant_keywords": ["management", "control", "green mottle", "vector", "fungicide", "treatment"],
+      "notes": "Management query for CGM"
+    },
+    {
+      "id": "CGM_03",
+      "disease_class": "Cassava Green Mottle",
+      "question": "Which fungicides are effective against cassava leaf diseases?",
+      "relevant_keywords": ["fungicide", "mancozeb", "application", "spray", "leaf disease", "treatment"],
+      "notes": "Fungicide query — crosses disease classes, good cross-source test"
+    },
+    {
+      "id": "GENERAL_01",
+      "disease_class": "General",
+      "question": "What nutrients does cassava need for healthy growth?",
+      "relevant_keywords": ["nitrogen", "potassium", "fertilizer", "nutrient", "soil", "growth"],
+      "notes": "Agronomic general query — tests corpus breadth"
+    },
+    {
+      "id": "GENERAL_02",
+      "disease_class": "General",
+      "question": "How do I identify disease on cassava leaves?",
+      "relevant_keywords": ["symptom", "diagnosis", "leaf", "identify", "disease", "spot"],
+      "notes": "Broad diagnostic query — should retrieve multi-disease chunks"
+    },
+    {
+      "id": "GENERAL_03",
+      "disease_class": "General",
+      "question": "What are the most common diseases affecting cassava in West Africa?",
+      "relevant_keywords": ["West Africa", "common", "disease", "cassava", "mosaic", "blight", "streak"],
+      "notes": "Geographic + multi-disease — tests corpus diversity"
+    },
+    {
+      "id": "GENERAL_04",
+      "disease_class": "General",
+      "question": "How do whiteflies affect cassava production?",
+      "relevant_keywords": ["whitefly", "Bemisia", "vector", "pest", "production", "cassava"],
+      "notes": "Vector/pest query that crosses CMD and CBSD"
+    },
+    {
+      "id": "GENERAL_05",
+      "disease_class": "General",
+      "question": "What post-harvest treatments help preserve cassava after infection?",
+      "relevant_keywords": ["post-harvest", "storage", "preservation", "treatment", "cassava", "infection"],
+      "notes": "Post-harvest query — tests edge of corpus coverage"
+    }
+  ]

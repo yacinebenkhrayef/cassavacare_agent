@@ -118,8 +118,14 @@ def retrieve_treatment_node(state: AgentState) -> dict:
     query = disease_query_text(state["pred_disease"])
 
     rag_result = _rag_client.ask(query)
-    answer = rag_result.get("answer", "")
-    sources = rag_result.get("sources", [])
+
+    # Safely handle both RAGAnswer objects and dict return values
+    if isinstance(rag_result, dict):
+        answer = rag_result.get("answer", "")
+        sources = rag_result.get("sources", [])
+    else:
+        answer = getattr(rag_result, "answer", "")
+        sources = getattr(rag_result, "sources", [])
 
     trace_line = (
         f"Étape 3 – Traitement trouvé : {answer[:120]}"

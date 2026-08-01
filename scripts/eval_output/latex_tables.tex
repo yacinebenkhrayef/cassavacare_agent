@@ -1,0 +1,57 @@
+
+
+% ─── Table 1: Overall metrics ───
+\begin{table}[H]
+\centering
+\caption{RAG Retrieval Evaluation — Overall Metrics (20 test queries)}
+\label{tab:rag_overall}
+\begin{tabular}{lccc}
+\hline
+\textbf{Metric} & \textbf{k=1} & \textbf{k=3} & \textbf{k=5} \\
+\hline
+Precision@k & 0.8333 & 0.8333 & 0.8667 \\
+Recall@k    & 0.1778 & 0.5472 & 1.0000 \\
+\hline
+MRR (mean reciprocal rank) & \multicolumn{3}{c}{0.8819} \\
+Mean avg similarity score  & \multicolumn{3}{c}{0.7249} \\
+Mean top-1 similarity score& \multicolumn{3}{c}{0.7595} \\
+\hline
+\end{tabular}
+\end{table}
+
+% ─── Table 2: Per-disease breakdown ───
+\begin{table}[H]
+\centering
+\caption{RAG Retrieval Evaluation — Per-Disease Breakdown}
+\label{tab:rag_disease}
+\begin{tabular}{lccc}
+\hline
+\textbf{Disease class} & \textbf{P@3} & \textbf{R@5} & \textbf{MRR} \\
+\hline
+Cassava Bacterial Blight & 1.0000 & 1.0000 & 1.0000 \\
+Cassava Brown Streak Disease & 0.8333 & 1.0000 & 0.8333 \\
+Cassava Green Mottle & 1.0000 & 1.0000 & 1.0000 \\
+Cassava Mosaic Disease & 0.6667 & 1.0000 & 0.8125 \\
+\hline
+\textbf{Macro average} & \textbf{0.8333} & \textbf{1.0000} & \textbf{0.8819} \\
+\hline
+\end{tabular}
+\end{table}
+
+% ─── Table 3: Latency ───
+\begin{table}[H]
+\centering
+\caption{RAG Retrieval Latency — Per-Query Wall Time (ms)}
+\label{tab:rag_latency}
+\begin{tabular}{lc}
+\hline
+\textbf{Statistic} & \textbf{Latency (ms)} \\
+\hline
+Mean   & 7735.8 \\
+Median & 5775.8 \\
+P95    & 16296.5 \\
+Min    & 3745.7 \\
+Max    & 16296.5 \\
+\hline
+\end{tabular}
+\end{table}

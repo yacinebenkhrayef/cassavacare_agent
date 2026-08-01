@@ -1,0 +1,31 @@
+image_path,true_label,location,job_id,status,elapsed_seconds,pred_disease_short,confidence,needs_new_image,rain_probability,wind_speed_kmh,weather_error,decision,decision_reason,num_rag_sources,final_report_is_fallback
+data\e2e_test_set\CBB_1841269407.jpg,CBB,"Tunis,TN",01119d6e-eb86-4cb1-8192-298413384d83,completed,5.12,Healthy,0.713,False,,,,no_action_needed,,0,False
+data\e2e_test_set\CBB_1203861431.jpg,CBB,"Sfax,TN",08dcf193-3ab3-4d5f-ac28-e2c03ff001e6,completed,2.05,CMD,0.3671,True,,,,,,0,False
+data\e2e_test_set\CBB_3057793137.jpg,CBB,"Sousse,TN",c0357e4a-adbd-43b9-9c5e-9b21cc997d15,completed,8.16,CBB,0.8798,False,0.0,19.4,,avoid_aerial,Vent 19 km/h > seuil 15 km/h — pulvérisation aérienne évitée (application au sol possible).,0,True
+data\e2e_test_set\CBB_2813723824.jpg,CBB,"Bizerte,TN",6cb51c12-f7de-448f-a24d-3b2121c3c2a3,completed,8.17,CBB,0.7345,False,0.0,20.4,,avoid_aerial,Vent 20 km/h > seuil 15 km/h — pulvérisation aérienne évitée (application au sol possible).,0,True
+data\e2e_test_set\CBB_2653588387.jpg,CBB,"Kairouan,TN",f02ce802-cbd5-4cdf-8eae-4708ead0ab07,completed,8.12,CBB,0.7549,False,0.0,30.0,,avoid_aerial,Vent 30 km/h > seuil 15 km/h — pulvérisation aérienne évitée (application au sol possible).,0,True
+data\e2e_test_set\CBB_208444967.jpg,CBB,"Tunis,TN",9e7bca21-032f-40ae-9a36-397a0bc960dc,completed,2.06,Healthy,0.4964,True,,,,,,0,False
+data\e2e_test_set\CBSD_1724843600.jpg,CBSD,"Sfax,TN",11be2b8a-abc4-49dd-b252-675dc0ca771f,completed,8.19,CBSD,0.9678,False,0.0,26.5,,avoid_aerial,Vent 26 km/h > seuil 15 km/h — pulvérisation aérienne évitée (application au sol possible).,0,True
+data\e2e_test_set\CBSD_1603130456.jpg,CBSD,"Sousse,TN",c992a437-1337-4824-96bb-2f01529f502d,completed,8.22,CBSD,0.702,False,0.0,19.4,,avoid_aerial,Vent 19 km/h > seuil 15 km/h — pulvérisation aérienne évitée (application au sol possible).,0,True
+data\e2e_test_set\CBSD_4046154865.jpg,CBSD,"Bizerte,TN",9c3a0c85-c02c-4d03-9da7-31a123d22ebf,completed,8.22,CBSD,0.9621,False,0.0,20.4,,avoid_aerial,Vent 20 km/h > seuil 15 km/h — pulvérisation aérienne évitée (application au sol possible).,0,True
+data\e2e_test_set\CBSD_1201690046.jpg,CBSD,"Kairouan,TN",51da5456-08e0-48e4-9d17-43a4b12ebb2c,completed,8.16,CBSD,0.9184,False,0.0,30.0,,avoid_aerial,Vent 30 km/h > seuil 15 km/h — pulvérisation aérienne évitée (application au sol possible).,0,True
+data\e2e_test_set\CBSD_1193197595.jpg,CBSD,"Tunis,TN",c81e7c79-49ea-4f94-848a-eae3782ad3e9,completed,2.09,Healthy,0.4963,True,,,,,,0,False
+data\e2e_test_set\CBSD_1658413948.jpg,CBSD,"Sfax,TN",f7b65f03-516d-4918-a717-63b9e9730515,completed,8.2,CBSD,0.9318,False,0.0,26.5,,avoid_aerial,Vent 26 km/h > seuil 15 km/h — pulvérisation aérienne évitée (application au sol possible).,0,True
+data\e2e_test_set\CGM_2401450142.jpg,CGM,"Sousse,TN",8abb0439-9bdf-4c96-a5ba-a6f47660d8cb,completed,8.2,CGM,0.8542,False,0.0,19.4,,avoid_aerial,Vent 19 km/h > seuil 15 km/h — pulvérisation aérienne évitée (application au sol possible).,0,True
+data\e2e_test_set\CGM_2487952325.jpg,CGM,"Bizerte,TN",423aafca-378a-43fb-b92b-33e327f100e4,completed,2.06,CMD,0.4959,True,,,,,,0,False
+data\e2e_test_set\CGM_433569439.jpg,CGM,"Kairouan,TN",820d9003-0a36-4dd8-a5c7-bb4815e035b1,completed,2.05,CGM,0.4028,True,,,,,,0,False
+data\e2e_test_set\CGM_1177195410.jpg,CGM,"Tunis,TN",056b3e40-a6b3-4d40-8280-67c674e0c8c8,completed,8.17,CGM,0.7416,False,0.0,30.2,,avoid_aerial,Vent 30 km/h > seuil 15 km/h — pulvérisation aérienne évitée (application au sol possible).,0,True
+data\e2e_test_set\CGM_809104607.jpg,CGM,"Sfax,TN",0edb4ceb-cab2-44bb-ae99-07f1173b9954,completed,8.22,CGM,0.8409,False,0.0,26.5,,avoid_aerial,Vent 26 km/h > seuil 15 km/h — pulvérisation aérienne évitée (application au sol possible).,0,True
+data\e2e_test_set\CGM_2276395594.jpg,CGM,"Sousse,TN",cc2768a1-c996-453d-9bc5-25ef83143293,completed,17.36,CGM,0.9127,False,0.0,19.4,,avoid_aerial,Vent 19 km/h > seuil 15 km/h — pulvérisation aérienne évitée (application au sol possible).,0,True
+data\e2e_test_set\CMD_556066757.jpg,CMD,"Bizerte,TN",333c1a6b-c512-479c-80a7-860c6c6fb075,completed,2.05,CMD,0.5781,True,,,,,,0,False
+data\e2e_test_set\CMD_4124483418.jpg,CMD,"Kairouan,TN",6d700110-c9d8-4037-b383-18ae9c699a9a,completed,2.06,CMD,0.479,True,,,,,,0,False
+data\e2e_test_set\CMD_491901266.jpg,CMD,"Tunis,TN",3e4a8769-4f60-4cd4-9df2-fbe565858b58,completed,2.09,CMD,0.5476,True,,,,,,0,False
+data\e2e_test_set\CMD_360723691.jpg,CMD,"Sfax,TN",e813e4c4-fabc-44b2-a6cf-81fddb557435,completed,2.05,CMD,0.5501,True,,,,,,0,False
+data\e2e_test_set\CMD_3003092970.jpg,CMD,"Sousse,TN",8cb29ccf-b1d8-467a-94c3-7c3e2583539e,completed,2.05,CMD,0.5336,True,,,,,,0,False
+data\e2e_test_set\CMD_2051048628.jpg,CMD,"Bizerte,TN",0d1b3910-7b68-4a41-a9d0-45f6f8aea29c,completed,2.05,CMD,0.5712,True,,,,,,0,False
+data\e2e_test_set\Healthy_3740043778.jpg,Healthy,"Kairouan,TN",36e07dfe-291c-4650-80ab-1f29e1c7fcf4,completed,2.06,Healthy,0.6705,True,,,,,,0,False
+data\e2e_test_set\Healthy_73728059.jpg,Healthy,"Tunis,TN",4623c5a5-e7e3-4ff8-91d5-74e359f6cdbd,completed,2.06,CBSD,0.6237,True,,,,,,0,False
+data\e2e_test_set\Healthy_2670711790.jpg,Healthy,"Sfax,TN",9b96d149-11c9-4ddd-8add-c0c070315bc3,completed,17.36,Healthy,0.7762,False,,,,no_action_needed,,0,True
+data\e2e_test_set\Healthy_1045099368.jpg,Healthy,"Sousse,TN",54afac67-6f4d-49b9-b906-3b5c8a73a743,completed,17.36,Healthy,0.7477,False,,,,no_action_needed,,0,True
+data\e2e_test_set\Healthy_1969585969.jpg,Healthy,"Bizerte,TN",a36dff0b-55c7-4ae9-8989-14eca37811fd,completed,17.38,Healthy,0.813,False,,,,no_action_needed,,0,True
+data\e2e_test_set\Healthy_3571912380.jpg,Healthy,"Kairouan,TN",829c4d36-6deb-4dbd-9cc8-914084211af7,completed,17.41,Healthy,0.7102,False,,,,no_action_needed,,0,True

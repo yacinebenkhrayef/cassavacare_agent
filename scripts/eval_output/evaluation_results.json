@@ -1,0 +1,526 @@
+[
+  {
+    "id": "CMD_01",
+    "disease_class": "Cassava Mosaic Disease",
+    "question": "What are the symptoms of cassava mosaic disease?",
+    "flags": [
+      true,
+      true,
+      false,
+      true,
+      false
+    ],
+    "scores": [
+      0.756,
+      0.7377,
+      0.7093,
+      0.7018,
+      0.7018
+    ],
+    "sources": [
+      "Wikipedia",
+      "FAO",
+      "IITA",
+      "Wikipedia",
+      "IITA"
+    ],
+    "timing": {
+      "retrieval": 12466.71,
+      "generation": 1797.55,
+      "total": 14264.26,
+      "wall_ms": 16296.55
+    },
+    "avg_score": 0.7213,
+    "top1_score": 0.756,
+    "rr": 1.0,
+    "P@1": 1.0,
+    "R@1": 0.3333,
+    "P@3": 0.6667,
+    "R@3": 0.6667,
+    "P@5": 0.6,
+    "R@5": 1.0
+  },
+  {
+    "id": "CMD_02",
+    "disease_class": "Cassava Mosaic Disease",
+    "question": "How is cassava mosaic disease transmitted between plants?",
+    "flags": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "scores": [
+      0.7873,
+      0.7601,
+      0.7494,
+      0.7484,
+      0.7394
+    ],
+    "sources": [
+      "Wikipedia",
+      "Wikipedia",
+      "Wikipedia",
+      "FAO",
+      "FAO"
+    ],
+    "timing": {
+      "retrieval": 10794.36,
+      "generation": 1995.93,
+      "total": 12790.29,
+      "wall_ms": 14825.44
+    },
+    "avg_score": 0.7569,
+    "top1_score": 0.7873,
+    "rr": 1.0,
+    "P@1": 1.0,
+    "R@1": 0.2,
+    "P@3": 1.0,
+    "R@3": 0.6,
+    "P@5": 1.0,
+    "R@5": 1.0
+  },
+  {
+    "id": "CMD_03",
+    "disease_class": "Cassava Mosaic Disease",
+    "question": "What resistant cassava varieties are recommended against CMD?",
+    "flags": [
+      false,
+      false,
+      false,
+      true,
+      true
+    ],
+    "scores": [
+      0.7741,
+      0.7317,
+      0.726,
+      0.7228,
+      0.7143
+    ],
+    "sources": [
+      "FAO",
+      "IITA",
+      "FAO",
+      "IITA",
+      "FAO"
+    ],
+    "timing": {
+      "retrieval": 54.32,
+      "generation": 1976.2,
+      "total": 2030.52,
+      "wall_ms": 4072.52
+    },
+    "avg_score": 0.7338,
+    "top1_score": 0.7741,
+    "rr": 0.25,
+    "P@1": 0.0,
+    "R@1": 0.0,
+    "P@3": 0.0,
+    "R@3": 0.0,
+    "P@5": 0.4,
+    "R@5": 1.0
+  },
+  {
+    "id": "CMD_04",
+    "disease_class": "Cassava Mosaic Disease",
+    "question": "How can cassava mosaic disease be controlled in the field?",
+    "flags": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "scores": [
+      0.815,
+      0.7999,
+      0.7922,
+      0.7597,
+      0.7434
+    ],
+    "sources": [
+      "Wikipedia",
+      "Wikipedia",
+      "Wikipedia",
+      "FAO",
+      "Wikipedia"
+    ],
+    "timing": {
+      "retrieval": 50.18,
+      "generation": 5747.18,
+      "total": 5797.36,
+      "wall_ms": 7834.73
+    },
+    "avg_score": 0.782,
+    "top1_score": 0.815,
+    "rr": 1.0,
+    "P@1": 1.0,
+    "R@1": 0.2,
+    "P@3": 1.0,
+    "R@3": 0.6,
+    "P@5": 1.0,
+    "R@5": 1.0
+  },
+  {
+    "id": "CBB_01",
+    "disease_class": "Cassava Bacterial Blight",
+    "question": "What are the signs of cassava bacterial blight infection?",
+    "flags": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "scores": [
+      0.7247,
+      0.722,
+      0.7078,
+      0.6907,
+      0.6898
+    ],
+    "sources": [
+      "IITA",
+      "IITA",
+      "IITA",
+      "IITA",
+      "FAO"
+    ],
+    "timing": {
+      "retrieval": 58.77,
+      "generation": 6786.43,
+      "total": 6845.2,
+      "wall_ms": 8890.97
+    },
+    "avg_score": 0.707,
+    "top1_score": 0.7247,
+    "rr": 1.0,
+    "P@1": 1.0,
+    "R@1": 0.2,
+    "P@3": 1.0,
+    "R@3": 0.6,
+    "P@5": 1.0,
+    "R@5": 1.0
+  },
+  {
+    "id": "CBB_02",
+    "disease_class": "Cassava Bacterial Blight",
+    "question": "How is cassava bacterial blight treated?",
+    "flags": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "scores": [
+      0.7999,
+      0.7526,
+      0.7298,
+      0.7212,
+      0.7182
+    ],
+    "sources": [
+      "IITA",
+      "IITA",
+      "IITA",
+      "IITA",
+      "IITA"
+    ],
+    "timing": {
+      "retrieval": 25.11,
+      "generation": 1945.57,
+      "total": 1970.68,
+      "wall_ms": 4023.4
+    },
+    "avg_score": 0.7443,
+    "top1_score": 0.7999,
+    "rr": 1.0,
+    "P@1": 1.0,
+    "R@1": 0.2,
+    "P@3": 1.0,
+    "R@3": 0.6,
+    "P@5": 1.0,
+    "R@5": 1.0
+  },
+  {
+    "id": "CBB_03",
+    "error": "503 Server Error: Service Unavailable for url: http://localhost:8000/query"
+  },
+  {
+    "id": "CBB_04",
+    "disease_class": "Cassava Bacterial Blight",
+    "question": "Can cassava bacterial blight be prevented through cultural practices?",
+    "flags": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "scores": [
+      0.7796,
+      0.7671,
+      0.7602,
+      0.7556,
+      0.7509
+    ],
+    "sources": [
+      "IITA",
+      "IITA",
+      "IITA",
+      "IITA",
+      "IITA"
+    ],
+    "timing": {
+      "retrieval": 46.27,
+      "generation": 2118.73,
+      "total": 2165.0,
+      "wall_ms": 4190.09
+    },
+    "avg_score": 0.7627,
+    "top1_score": 0.7796,
+    "rr": 1.0,
+    "P@1": 1.0,
+    "R@1": 0.2,
+    "P@3": 1.0,
+    "R@3": 0.6,
+    "P@5": 1.0,
+    "R@5": 1.0
+  },
+  {
+    "id": "CBSD_01",
+    "disease_class": "Cassava Brown Streak Disease",
+    "question": "What are the symptoms of cassava brown streak disease?",
+    "flags": [
+      false,
+      false,
+      true,
+      false,
+      true
+    ],
+    "scores": [
+      0.7044,
+      0.6712,
+      0.6709,
+      0.6391,
+      0.6307
+    ],
+    "sources": [
+      "IITA",
+      "IITA",
+      "IITA",
+      "IITA",
+      "Wikipedia"
+    ],
+    "timing": {
+      "retrieval": 49.32,
+      "generation": 1656.73,
+      "total": 1706.05,
+      "wall_ms": 3745.65
+    },
+    "avg_score": 0.6633,
+    "top1_score": 0.7044,
+    "rr": 0.3333,
+    "P@1": 0.0,
+    "R@1": 0.0,
+    "P@3": 0.3333,
+    "R@3": 0.5,
+    "P@5": 0.4,
+    "R@5": 1.0
+  },
+  {
+    "id": "CBSD_02",
+    "disease_class": "Cassava Brown Streak Disease",
+    "question": "How does cassava brown streak virus spread?",
+    "flags": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "scores": [
+      0.7636,
+      0.7526,
+      0.7288,
+      0.7218,
+      0.7006
+    ],
+    "sources": [
+      "Wikipedia",
+      "Wikipedia",
+      "Wikipedia",
+      "Wikipedia",
+      "PubMed"
+    ],
+    "timing": {
+      "retrieval": 49.57,
+      "generation": 2454.41,
+      "total": 2503.98,
+      "wall_ms": 4565.78
+    },
+    "avg_score": 0.7335,
+    "top1_score": 0.7636,
+    "rr": 1.0,
+    "P@1": 1.0,
+    "R@1": 0.2,
+    "P@3": 1.0,
+    "R@3": 0.6,
+    "P@5": 1.0,
+    "R@5": 1.0
+  },
+  {
+    "id": "CBSD_03",
+    "disease_class": "Cassava Brown Streak Disease",
+    "question": "What is the economic impact of cassava brown streak disease in Africa?",
+    "flags": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "scores": [
+      0.7415,
+      0.7064,
+      0.6914,
+      0.6833,
+      0.6697
+    ],
+    "sources": [
+      "FAO",
+      "FAO",
+      "FAO",
+      "FAO",
+      "IITA"
+    ],
+    "timing": {
+      "retrieval": 7761.51,
+      "generation": 3026.45,
+      "total": 10787.96,
+      "wall_ms": 12832.55
+    },
+    "avg_score": 0.6985,
+    "top1_score": 0.7415,
+    "rr": 1.0,
+    "P@1": 1.0,
+    "R@1": 0.2,
+    "P@3": 1.0,
+    "R@3": 0.6,
+    "P@5": 1.0,
+    "R@5": 1.0
+  },
+  {
+    "id": "CBSD_04",
+    "disease_class": "Cassava Brown Streak Disease",
+    "question": "Are there cassava varieties resistant to brown streak virus?",
+    "flags": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "scores": [
+      0.7654,
+      0.7544,
+      0.7544,
+      0.7389,
+      0.7361
+    ],
+    "sources": [
+      "Wikipedia",
+      "PubMed",
+      "PubMed",
+      "FAO",
+      "Wikipedia"
+    ],
+    "timing": {
+      "retrieval": 39.89,
+      "generation": 3476.19,
+      "total": 3516.08,
+      "wall_ms": 5569.83
+    },
+    "avg_score": 0.7498,
+    "top1_score": 0.7654,
+    "rr": 1.0,
+    "P@1": 1.0,
+    "R@1": 0.2,
+    "P@3": 1.0,
+    "R@3": 0.6,
+    "P@5": 1.0,
+    "R@5": 1.0
+  },
+  {
+    "id": "CGM_01",
+    "disease_class": "Cassava Green Mottle",
+    "question": "What are the symptoms of cassava green mottle virus?",
+    "flags": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "scores": [
+      0.702,
+      0.6652,
+      0.6249,
+      0.621,
+      0.6151
+    ],
+    "sources": [
+      "Wikipedia",
+      "Wikipedia",
+      "IITA",
+      "Wikipedia",
+      "IITA"
+    ],
+    "timing": {
+      "retrieval": 37.26,
+      "generation": 3871.09,
+      "total": 3908.35,
+      "wall_ms": 5981.82
+    },
+    "avg_score": 0.6456,
+    "top1_score": 0.702,
+    "rr": 1.0,
+    "P@1": 1.0,
+    "R@1": 0.2,
+    "P@3": 1.0,
+    "R@3": 0.6,
+    "P@5": 1.0,
+    "R@5": 1.0
+  },
+  {
+    "id": "CGM_02",
+    "error": "503 Server Error: Service Unavailable for url: http://localhost:8000/query"
+  },
+  {
+    "id": "CGM_03",
+    "error": "503 Server Error: Service Unavailable for url: http://localhost:8000/query"
+  },
+  {
+    "id": "GENERAL_01",
+    "error": "503 Server Error: Service Unavailable for url: http://localhost:8000/query"
+  },
+  {
+    "id": "GENERAL_02",
+    "error": "503 Server Error: Service Unavailable for url: http://localhost:8000/query"
+  },
+  {
+    "id": "GENERAL_03",
+    "error": "503 Server Error: Service Unavailable for url: http://localhost:8000/query"
+  },
+  {
+    "id": "GENERAL_04",
+    "error": "503 Server Error: Service Unavailable for url: http://localhost:8000/query"
+  },
+  {
+    "id": "GENERAL_05",
+    "error": "503 Server Error: Service Unavailable for url: http://localhost:8000/query"
+  }
+]

@@ -1,6 +1,13 @@
-import requests
+import os
 from dataclasses import dataclass
 from typing import List, Optional
+import requests
+from qdrant_client import QdrantClient
+
+# Configuration loaded from environment variables
+QDRANT_HOST: str = os.getenv("QDRANT_HOST", "localhost")
+QDRANT_PORT: int = int(os.getenv("QDRANT_PORT", "6333"))
+
 
 @dataclass
 class RAGAnswer:
@@ -9,13 +16,24 @@ class RAGAnswer:
     chunks_used: int
     timing_ms: Optional[dict] = None
 
-class CassavaRAGClient:
-    """Thin client for the CassavaCare-Agent to consume the RAG API without
-    knowing anything about Qdrant, embeddings, or HTTP internals."""
 
-    def __init__(self, base_url: str = "http://localhost:8000", timeout: int = 30):
+class CassavaRAGClient:
+    """Client for CassavaCare-Agent to consume the RAG API and interact with Qdrant directly."""
+
+    def __init__(
+        self,
+        base_url: str = "http://localhost:8000",
+        timeout: int = 30,
+        host: str = QDRANT_HOST,
+        port: int = QDRANT_PORT,
+        *args,
+        **kwargs,
+    ):
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
+        
+        # Initialize native Qdrant Client
+        self._client = QdrantClient(host=host, port=port, *args, **kwargs)
 
     def ask(self, question: str, top_k: int = 5, source_filter: Optional[str] = None) -> RAGAnswer:
         try:
