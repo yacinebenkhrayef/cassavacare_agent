@@ -1,3 +1,4 @@
+# src/api/schemas.py
 """Pydantic response models for the CassavaCare-Agent API (Phase 4, Part 3)."""
 from datetime import datetime
 from typing import Any, Dict, List, Optional

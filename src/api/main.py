@@ -1,3 +1,4 @@
+# src/api/main.py
 """
 CassavaCare-Agent API (Phase 4, Part 3).
 
@@ -52,6 +53,10 @@ async def submit_diagnosis(
     image: UploadFile = File(...),
     location: str = Form(...),
 ):
+    print("filename:", image.filename)
+    print("content_type:", image.content_type)
+    print("allowed:", ALLOWED_CONTENT_TYPES)
+    
     if image.content_type not in ALLOWED_CONTENT_TYPES:
         raise HTTPException(
             status_code=415,
