@@ -7,6 +7,8 @@ _KEYS = (
     "is_processing",
     "uploaded_image_bytes",
     "uploaded_image_name",
+    "gradcam_bytes",
+    "gradcam_error",
 )
 
 

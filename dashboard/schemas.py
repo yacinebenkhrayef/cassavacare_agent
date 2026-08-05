@@ -34,7 +34,11 @@ class DiagnosisResult:
             final_report=d.get("final_report", ""),
             trace=d.get("trace", []),
         )
-
+    
+    @property
+    def is_healthy(self) -> bool:
+        label = self.pred_disease_short or self.pred_disease or ""
+        return label.lower() == "healthy"
 
 @dataclass
 class JobStatusResult:

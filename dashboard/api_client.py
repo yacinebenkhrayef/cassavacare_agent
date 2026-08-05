@@ -58,11 +58,23 @@ class AgentAPIClient:
             time.sleep(settings.poll_interval_s)
 
     def get_gradcam_bytes(self, job_id: str) -> bytes:
-        """Fetches the Grad-CAM PNG once the job is completed. Consumed starting Part 2."""
+        """Fetches the Grad-CAM PNG once the job is completed."""
         url = f"{self.base_url}{settings.submit_path}/{job_id}{settings.gradcam_path_suffix}"
         try:
             resp = requests.get(url, timeout=settings.request_timeout_s)
+        except requests.RequestException as exc:
+            raise AgentAPIError(f"Failed to reach Grad-CAM endpoint: {exc}") from exc
+
+        if resp.status_code == 404:
+            try:
+                detail = resp.json().get("detail", "Grad-CAM image not available.")
+            except ValueError:
+                detail = "Grad-CAM image not available."
+            raise AgentAPIError(detail)
+
+        try:
             resp.raise_for_status()
         except requests.RequestException as exc:
             raise AgentAPIError(f"Failed to fetch Grad-CAM image: {exc}") from exc
+
         return resp.content

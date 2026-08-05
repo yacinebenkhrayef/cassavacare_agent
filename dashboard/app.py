@@ -1,3 +1,4 @@
+# dashboard/app.py
 import streamlit as st
 
 from api_client import AgentAPIClient, AgentAPIError
@@ -45,6 +46,13 @@ if submit_clicked:
                 st.session_state["job_error"] = job_status.error or "Job failed with no error detail."
             else:
                 st.session_state["job_result"] = job_status
+                result = job_status.result
+                if result and not result.needs_new_image and not result.is_healthy:
+                    try:
+                        with st.spinner("Fetching Grad-CAM visualization…"):
+                            st.session_state["gradcam_bytes"] = client.get_gradcam_bytes(job_status.job_id)
+                    except AgentAPIError as exc:
+                        st.session_state["gradcam_error"] = str(exc)
         except AgentAPIError as exc:
             st.session_state["job_error"] = str(exc)
         finally:
