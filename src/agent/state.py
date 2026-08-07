@@ -1,3 +1,4 @@
+# src/agent/state.py
 """
 Shared state schema for the CassavaCare-Agent LangGraph workflow.
 

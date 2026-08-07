@@ -1,3 +1,4 @@
+# api/client.py
 import os
 from dataclasses import dataclass
 from typing import List, Optional
@@ -37,23 +38,31 @@ class CassavaRAGClient:
 
     def ask(self, question: str, top_k: int = 5, source_filter: Optional[str] = None) -> RAGAnswer:
         try:
+            # Build payload matching QueryRequest schema
+            payload = {
+                "query": question,  # Key must be 'query'
+                "top_k": top_k
+            }
+            if source_filter:
+                payload["source_filter"] = source_filter
+
             resp = requests.post(
                 f"{self.base_url}/query",
-                json={"question": question, "top_k": top_k, "source_filter": source_filter},
+                json=payload,
                 timeout=self.timeout,
             )
             resp.raise_for_status()
             data = resp.json()
             return RAGAnswer(
                 answer=data["answer"],
-                sources=data["sources"],
-                chunks_used=data["chunks_used"],
+                sources=data.get("sources", []),
+                chunks_used=data.get("chunks_used", len(data.get("sources", []))),
                 timing_ms=data.get("timing_ms"),
             )
         except requests.exceptions.Timeout:
             return RAGAnswer(answer="The knowledge service timed out. Please try again.", sources=[], chunks_used=0)
         except requests.exceptions.RequestException as e:
-            return RAGAnswer(answer=f"Knowledge service error: {e}", sources=[], chunks_used=0)
+            return RAGAnswer(answer=f"Knowledge service error: {e}", sources=[], chunks_used=0) 
 
     def is_healthy(self) -> bool:
         try:

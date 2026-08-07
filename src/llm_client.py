@@ -1,3 +1,4 @@
+# src/llm_client.py
 """
 Gemini client for CassavaCare-Agent report synthesis (Phase 4, Part 3).
 

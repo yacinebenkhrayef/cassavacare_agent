@@ -1,6 +1,14 @@
-# dashboard/components/results_placeholder.py
 import streamlit as st
 from image_utils import blend_gradcam_overlay
+from reasoning_utils import parse_trace
+
+_DECISION_META = {
+    "apply": ("✅", "Treatment can be applied now", "success"),
+    "defer": ("⏳", "Treatment deferred", "warning"),
+    "avoid_aerial": ("🚫", "Aerial spraying avoided — ground application still possible", "warning"),
+    "no_action_needed": ("🌿", "No action needed", "success"),
+    "pending": ("⏱️", "Decision pending", "info"),
+}
 
 
 def render_results(job_status, original_image_bytes):
@@ -77,30 +85,51 @@ def render_results(job_status, original_image_bytes):
 
     with tab_reasoning:
         if result.trace:
-            for i, step in enumerate(result.trace, start=1):
-                st.write(f"**{i}.** {step}")
-            st.caption(
-                "Raw trace shown as-is — styled decision-tree view comes in Part 3."
-            )
+            for step in parse_trace(result.trace):
+                with st.expander(f"{step.icon} Étape {step.number} – {step.label}", expanded=False):
+                    st.write(step.detail)
         else:
-            st.info("Agent reasoning trace — implemented in Part 3.")
+            st.info("No reasoning trace available for this diagnosis.")
 
     with tab_sources:
         if is_healthy:
             st.info("No treatment sources needed — leaf is healthy.")
         elif result.rag_sources:
-            st.info(
-                f"{len(result.rag_sources)} source(s) retrieved — formatted cards in Part 3."
-            )
+            sources = sorted(result.rag_sources, key=lambda s: s.score, reverse=True)
+            shown_max = min(len(sources), 5)
+            show_all = st.toggle(f"Show all {shown_max} sources", value=False)
+            limit = 5 if show_all else 3
+            for src in sources[:limit]:
+                with st.container(border=True):
+                    st.markdown(f"**{src.display_title}**")
+                    if src.source:
+                        st.caption(f"📁 {src.source}")
+                    score_pct = max(0.0, min(1.0, src.score))
+                    st.progress(score_pct, text=f"Relevance: {src.score:.2f}")
+                    if src.text:
+                        preview = src.text if len(src.text) <= 240 else src.text[:240] + "…"
+                        st.write(preview)
+                        if len(src.text) > 240:
+                            with st.expander("Show full excerpt"):
+                                st.write(src.text)
         else:
-            st.info("RAG source cards — implemented in Part 3.")
+            st.info("No sources were retrieved for this diagnosis.")
 
     with tab_reco:
         if result.weather_error:
-            st.warning(f"Weather data unavailable: {result.weather_error}")
+            st.warning(f"⚠️ Weather data unavailable: {result.weather_error}")
+        elif result.weather:
+            w = result.weather
+            cols = st.columns(3)
+            cols[0].metric("🌧️ Rain probability", f"{w.get('rain_probability', 0) * 100:.0f}%")
+            cols[1].metric("💨 Wind speed", f"{w.get('wind_speed_kmh', 0):.1f} km/h")
+            cols[2].metric("⏱️ Forecast window", f"{w.get('forecast_hours', '—')}h")
+
         if result.decision:
-            st.write(f"**Decision:** {result.decision}")
+            icon, label, level = _DECISION_META.get(result.decision, ("ℹ️", result.decision, "info"))
+            {"success": st.success, "warning": st.warning, "info": st.info}[level](f"{icon} **{label}**")
         if result.decision_reason:
             st.caption(result.decision_reason)
         if result.final_report:
+            st.divider()
             st.write(result.final_report)

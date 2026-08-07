@@ -5,6 +5,8 @@ CassavaCare-Agent API (Phase 4, Part 3).
 POST /diagnose         — submit a leaf image + city, get a job_id back (202)
 GET  /diagnose/{id}     — poll job status/result
 GET  /diagnose/{id}/gradcam — fetch the Grad-CAM heatmap once completed
+POST /query            — query RAG vector knowledge store directly
+GET  /query            — query route information / status
 GET  /health            — liveness check
 """
 import shutil
@@ -16,16 +18,21 @@ from fastapi.responses import FileResponse
 
 from src.agent.config import ALLOWED_CONTENT_TYPES, UPLOAD_DIR
 from src.agent.graph import agent_graph
-from src.agent.nodes import initialize_agent_singletons
+from src.agent.nodes import get_rag_client, initialize_agent_singletons
 from src.api.jobs import JobStatus, job_store
-from src.api.schemas import DiagnosisResult, JobStatusResponse, JobSubmitResponse
+from src.api.schemas import (
+    DiagnosisResult,
+    JobStatusResponse,
+    JobSubmitResponse,
+    QueryRequest,
+    QueryResponse,
+)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Loads the checkpoint, RAG client, weather client, and Gemini client
-    # exactly once at process startup — not at import time (flagged since
-    # Part 1, fixed in nodes.py §6a this part).
+    # exactly once at process startup — not at import time.
     initialize_agent_singletons()
     yield
     # Nothing to tear down: Qdrant/OpenWeather/Gemini are all stateless
@@ -37,7 +44,7 @@ app = FastAPI(title="CassavaCare-Agent API", lifespan=lifespan)
 
 def _run_diagnosis_job(job_id: str, image_path: str, location: str) -> None:
     """Runs the full LangGraph pipeline in Starlette's background threadpool
-    (see §10 note below) — safe to block here."""
+    — safe to block here."""
     job_store.mark_running(job_id)
     try:
         result = agent_graph.invoke({"image_path": image_path, "location": location})
@@ -56,7 +63,7 @@ async def submit_diagnosis(
     print("filename:", image.filename)
     print("content_type:", image.content_type)
     print("allowed:", ALLOWED_CONTENT_TYPES)
-    
+
     if image.content_type not in ALLOWED_CONTENT_TYPES:
         raise HTTPException(
             status_code=415,
@@ -108,6 +115,33 @@ async def get_gradcam_image(job_id: str):
     if not gradcam_path or not Path(gradcam_path).exists():
         raise HTTPException(status_code=404, detail="Grad-CAM image not found.")
     return FileResponse(gradcam_path, media_type="image/png")
+
+
+@app.post("/query", response_model=QueryResponse)
+async def process_query(payload: QueryRequest):
+    """Direct RAG search route queried by frontend dashboards or standalone clients."""
+    rag_client = get_rag_client()
+    if rag_client is None:
+        raise HTTPException(status_code=503, detail="RAG client singleton is not initialized.")
+    
+    try:
+        rag_result = rag_client.ask(payload.query)
+        if isinstance(rag_result, dict):
+            answer = rag_result.get("answer", "")
+            sources = rag_result.get("sources", [])
+        else:
+            answer = getattr(rag_result, "answer", "")
+            sources = getattr(rag_result, "sources", [])
+
+        return QueryResponse(answer=answer, sources=sources)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to query RAG service: {str(exc)}")
+
+
+@app.get("/query")
+async def query_health():
+    """Information check for GET /query requests."""
+    return {"message": "Use POST /query with body {'query': '...'}"}
 
 
 @app.get("/health")

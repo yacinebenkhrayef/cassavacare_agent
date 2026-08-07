@@ -1,6 +1,28 @@
+# dashboard/schemas.py
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Optional
+
+
+@dataclass
+class RagSource:
+    text: str = ""
+    source: str = ""
+    filename: str = ""
+    score: float = 0.0
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "RagSource":
+        return cls(
+            text=d.get("text", ""),
+            source=d.get("source", ""),
+            filename=d.get("filename", ""),
+            score=float(d.get("score", 0.0)),
+        )
+
+    @property
+    def display_title(self) -> str:
+        return self.filename or self.source or "Untitled source"
 
 
 @dataclass
@@ -10,13 +32,13 @@ class DiagnosisResult:
     confidence: Optional[float] = None
     needs_new_image: bool = False
     gradcam_path: Optional[str] = None
-    rag_sources: list = field(default_factory=list)     # raw dicts — shaped in Part 3
-    weather: Optional[dict] = None                       # raw dict — shaped in Part 2/3
+    rag_sources: list = field(default_factory=list)
+    weather: Optional[dict] = None
     weather_error: Optional[str] = None
     decision: Optional[str] = None
     decision_reason: Optional[str] = None
     final_report: str = ""
-    trace: list = field(default_factory=list)            # flat list[str], reasoning trace
+    trace: list = field(default_factory=list)
 
     @classmethod
     def from_dict(cls, d: dict) -> "DiagnosisResult":
@@ -26,7 +48,7 @@ class DiagnosisResult:
             confidence=d.get("confidence"),
             needs_new_image=d.get("needs_new_image", False),
             gradcam_path=d.get("gradcam_path"),
-            rag_sources=d.get("rag_sources", []),
+            rag_sources=[RagSource.from_dict(s) for s in d.get("rag_sources", [])],
             weather=d.get("weather"),
             weather_error=d.get("weather_error"),
             decision=d.get("decision"),
@@ -39,6 +61,7 @@ class DiagnosisResult:
     def is_healthy(self) -> bool:
         label = self.pred_disease_short or self.pred_disease or ""
         return label.lower() == "healthy"
+
 
 @dataclass
 class JobStatusResult:

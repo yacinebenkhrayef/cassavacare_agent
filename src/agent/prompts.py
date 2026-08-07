@@ -1,3 +1,4 @@
+# src/agent/prompts.py
 """Builds the *data* portion of the Gemini prompt (Phase 4, Part 3).
 
 The persona and formatting rules live in src/llm_client.py's

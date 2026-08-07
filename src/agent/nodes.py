@@ -1,3 +1,4 @@
+# src/agent/nodes.py
 """
 LangGraph node functions for CassavaCare-Agent (Phase 4, Part 3).
 
@@ -14,7 +15,6 @@ from src.weather_client import OpenWeatherClient, WeatherAPIError
 from src.llm_client import GeminiClient, LLMAPIError
 from src.agent.prompts import build_diagnosis_prompt, build_healthy_prompt
 
-# TODO: adjust this import to match your actual Phase 3 project structure.
 from api.client import CassavaRAGClient
 
 from src.agent.config import (
@@ -29,10 +29,7 @@ from src.agent.state import AgentState
 from src.agent.utils import save_gradcam_overlay, disease_query_text
 
 # ---------------------------------------------------------------------------
-# Module-level singletons — now lazily created by initialize_agent_singletons(),
-# called once from FastAPI's lifespan handler (src/api/main.py) instead of at
-# module-import time. All node functions below read these same names as
-# module globals — nothing else in this file changes.
+# Module-level singletons — lazily created by initialize_agent_singletons()
 # ---------------------------------------------------------------------------
 _device = None
 _model = None
@@ -43,17 +40,26 @@ _llm_client = None
 
 
 def initialize_agent_singletons() -> None:
-    """Idempotent — safe to call more than once (e.g. once per test module).
+    """Idempotent — safe to call more than once.
     Call this exactly once per process, before the first graph invocation."""
     global _device, _model, _cam_wrapper, _rag_client, _weather_client, _llm_client
     if _model is not None:
         return
     _device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    # Load TorchScript checkpoints cleanly to prevent torch.jit dispatch warnings
     _model = load_model(CHECKPOINT_PATH, CFG, device=_device)
+    _model.eval()
+ 
     _cam_wrapper = GradCAMWrapper(_model, device=_device, img_size=IMG_SIZE)
     _rag_client = CassavaRAGClient()
     _weather_client = OpenWeatherClient()
     _llm_client = GeminiClient()
+
+
+def get_rag_client():
+    """Accessor for API routes requiring direct RAG client interaction."""
+    return _rag_client
 
 
 # ---------------------------------------------------------------------------
@@ -68,9 +74,6 @@ def predict_disease_node(state: AgentState) -> dict:
     )
     pred_class = result["pred_class"]
 
-    # Pass pred_class explicitly so the heatmap targets the same class predict()
-    # reported (model is in eval mode, so this is deterministic, but being
-    # explicit avoids any ambiguity between the two forward passes).
     _, _, overlay = _cam_wrapper.generate_heatmap(image_path, target_class=pred_class)
     gradcam_path = save_gradcam_overlay(overlay, image_path, GRADCAM_OUTPUT_DIR)
 
@@ -91,7 +94,7 @@ def predict_disease_node(state: AgentState) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Step 2 — Confidence gate (conditional edge, no state mutation)
+# Step 2 — Confidence gate
 # ---------------------------------------------------------------------------
 def check_confidence(state: AgentState) -> str:
     if state["confidence"] < CONFIDENCE_THRESHOLD:
@@ -119,7 +122,6 @@ def retrieve_treatment_node(state: AgentState) -> dict:
 
     rag_result = _rag_client.ask(query)
 
-    # Safely handle both RAGAnswer objects and dict return values
     if isinstance(rag_result, dict):
         answer = rag_result.get("answer", "")
         sources = rag_result.get("sources", [])
@@ -141,7 +143,7 @@ def retrieve_treatment_node(state: AgentState) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Routing after RAG: skip weather/decision entirely for healthy leaves
+# Routing after RAG
 # ---------------------------------------------------------------------------
 def check_disease_status(state: AgentState) -> str:
     if state["pred_disease"] == "healthy":
@@ -181,11 +183,6 @@ def check_weather_status(state: AgentState) -> str:
 
 
 def weather_fallback_node(state: AgentState) -> dict:
-    """
-    Safety-first fallback when the weather API is unreachable or
-    misconfigured. Agronomic reasoning: it's better to defer a treatment
-    unnecessarily than to apply one during conditions we couldn't verify.
-    """
     reason = (
         f"Données météo indisponibles ({state.get('weather_error', 'erreur inconnue')}) "
         f"— traitement reporté par précaution."
@@ -232,9 +229,7 @@ def decision_node(state: AgentState) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Step 6 — Synthesis (REAL — Part 3). Falls back to a templated report if
-# Gemini is unavailable for any reason, rather than letting the whole graph
-# invocation fail — a farmer should still get *a* report, even a plain one.
+# Step 6 — Synthesis
 # ---------------------------------------------------------------------------
 def synthesize_report_node(state: AgentState) -> dict:
     if state["pred_disease"] == "healthy":
@@ -259,9 +254,6 @@ def synthesize_report_node(state: AgentState) -> dict:
 
 
 def _fallback_report(state: AgentState, error_message: str) -> str:
-    """Same content as the Part 1 stub, in English, plus an explicit flag so
-    this is never mistaken for a real LLM synthesis in the dashboard (Phase 5)
-    or in a §6.4 UX evaluation."""
     if state["pred_disease"] == "healthy":
         return (
             f"[Fallback report — Gemini unavailable: {error_message}]\n"

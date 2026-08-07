@@ -43,7 +43,7 @@ GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL: str = "gemini-2.5-flash"     # free-tier default as of mid-2026;
                                             # swap to "gemini-2.5-flash-lite"
                                             # if you hit free-tier rate limits
-GEMINI_MAX_OUTPUT_TOKENS: int = 512        # ~220 words + margin
+GEMINI_MAX_OUTPUT_TOKENS: int = 1024       # ~220 words + margin
 GEMINI_TEMPERATURE: float = 0.3            # low — factual report, not creative writing
 GEMINI_MAX_RETRIES: int = 3
 GEMINI_RETRY_BACKOFF_SECONDS: float = 2.0

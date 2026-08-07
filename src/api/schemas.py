@@ -1,5 +1,5 @@
 # src/api/schemas.py
-"""Pydantic response models for the CassavaCare-Agent API (Phase 4, Part 3)."""
+"""Pydantic models for the CassavaCare-Agent API (Phase 4, Part 3)."""
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
@@ -41,3 +41,17 @@ class JobStatusResponse(BaseModel):
     updated_at: datetime
     result: Optional[DiagnosisResult] = None
     error: Optional[str] = None
+
+
+class QueryRequest(BaseModel):
+    query: str = Field(..., validation_alias="question") # Accepts 'question' or 'query'
+    top_k: Optional[int] = 5
+
+    model_config = {
+        "populate_by_name": True  # Allows both 'query' and 'question'
+    }
+
+
+class QueryResponse(BaseModel):
+    answer: str
+    sources: List[Dict[str, Any]] = Field(default_factory=list)
