@@ -1,19 +1,23 @@
 services:
   qdrant:
     image: qdrant/qdrant:latest
+    container_name: cassava_qdrant
     ports:
       - "6333:6333"
     volumes:
       - qdrant_storage:/qdrant/storage
     healthcheck:
-      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/6333' || exit 1"]
+      test: ["CMD-SHELL", "bash -c 'cat < /dev/null > /dev/tcp/localhost/6333' || exit 1"]
       interval: 5s
       timeout: 3s
       retries: 10
       start_period: 10s
 
   backend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cassava_backend
     ports:
       - "8000:8000"
     env_file:
@@ -21,12 +25,34 @@ services:
     environment:
       QDRANT_HOST: qdrant
       QDRANT_PORT: "6333"
+      PYTHONPATH: /app
     depends_on:
       qdrant:
         condition: service_healthy
     volumes:
       - ./data/uploads:/app/data/uploads
       - ./outputs:/app/outputs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: dashboard/Dockerfile
+    container_name: cassava_dashboard
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    environment:
+      AGENT_API_BASE_URL: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
 
 volumes:
   qdrant_storage:

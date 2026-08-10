@@ -9,7 +9,7 @@ import os
 from dotenv import load_dotenv
 
 # FR3 — Vérification confiance
-CONFIDENCE_THRESHOLD: float = 0.70  # < 0.70 -> request a new image
+CONFIDENCE_THRESHOLD: float = 0.50  # < 0.50 -> request a new image
 
 # FR5 says "> 30 %" ; §6.3 KPI table says "> 50 % dans les 6h".
 # Using FR5's value here — CHANGE THIS if you decide to standardize on 50%,

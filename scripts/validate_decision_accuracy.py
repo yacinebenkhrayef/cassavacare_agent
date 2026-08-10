@@ -14,7 +14,7 @@ RESULTS_PATH = "reports/e2e_run/e2e_results.csv"
 
 # Kept independent from src/agent/config.py on purpose (see module docstring).
 # If you ever change the real thresholds, update these two lines to match.
-CONFIDENCE_THRESHOLD = 0.70
+CONFIDENCE_THRESHOLD = 0.50
 RAIN_PROBABILITY_THRESHOLD = 0.30   # resolved value — see Part 1 §2 flag
 WIND_SPEED_THRESHOLD_KMH = 15.0
 

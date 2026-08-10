@@ -33,4 +33,4 @@ wandb:
 api:
   host: 0.0.0.0
   port: 8000
-  confidence_threshold: 0.7
+  confidence_threshold: 0.5
