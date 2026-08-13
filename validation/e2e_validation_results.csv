@@ -1,6 +1,6 @@
 image_path,bucket,passed,detail,processing_s,extra_note
-data\e2e_test_set\CBB_208444967.jpg,error,False,"HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=15)",0.00,
-data\e2e_test_set\CBB_1203861431.jpg,error,False,"HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=15)",0.00,
+data\e2e_test_set\CBB_208444967.jpg,low_confidence,True,needs_new_image=True as expected,1.03,
+data\e2e_test_set\CBB_1203861431.jpg,low_confidence,True,needs_new_image=True as expected,1.03,
 data\e2e_test_set\CBB_1841269407.jpg,error,False,"HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=15)",0.00,
 data\e2e_test_set\CBB_2653588387.jpg,error,False,"HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=15)",0.00,
 data\e2e_test_set\CBB_2813723824.jpg,error,False,"HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=15)",0.00,

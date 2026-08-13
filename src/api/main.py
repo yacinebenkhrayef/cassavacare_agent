@@ -18,7 +18,8 @@ from fastapi.responses import FileResponse
 
 from src.agent.config import ALLOWED_CONTENT_TYPES, UPLOAD_DIR
 from src.agent.graph import agent_graph
-from src.agent.nodes import get_rag_client, initialize_agent_singletons
+from api.rag_service import query_knowledge_async
+from src.agent.nodes import initialize_agent_singletons
 from src.api.jobs import JobStatus, job_store
 from src.api.schemas import (
     DiagnosisResult,
@@ -120,20 +121,15 @@ async def get_gradcam_image(job_id: str):
 @app.post("/query", response_model=QueryResponse)
 async def process_query(payload: QueryRequest):
     """Direct RAG search route queried by frontend dashboards or standalone clients."""
-    rag_client = get_rag_client()
-    if rag_client is None:
-        raise HTTPException(status_code=503, detail="RAG client singleton is not initialized.")
-    
     try:
-        rag_result = rag_client.ask(payload.query)
-        if isinstance(rag_result, dict):
-            answer = rag_result.get("answer", "")
-            sources = rag_result.get("sources", [])
-        else:
-            answer = getattr(rag_result, "answer", "")
-            sources = getattr(rag_result, "sources", [])
-
-        return QueryResponse(answer=answer, sources=sources)
+        rag_result = await query_knowledge_async(
+            payload.query,
+            top_k=payload.top_k or 5,
+        )
+        return QueryResponse(
+            answer=rag_result["answer"],
+            sources=rag_result.get("sources", []),
+        )
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to query RAG service: {str(exc)}")
 

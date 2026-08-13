@@ -56,6 +56,11 @@ def initialize_agent_singletons() -> None:
     _weather_client = OpenWeatherClient()
     _llm_client = GeminiClient()
 
+    # Warm up the sentence-transformer so the first RAG query is not blocked
+    # on a multi-minute HuggingFace download inside a diagnosis job.
+    from api.retriever import get_model
+    get_model()
+
 
 def get_rag_client():
     """Accessor for API routes requiring direct RAG client interaction."""

@@ -4,12 +4,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.models import QueryRequest, QueryResponse, SourceChunk
-from api.retriever import retrieve
-# Updated import to bring in the asynchronous generator function
-from api.generator import generate_answer_async
-from api.cache import make_cache_key, get_cached, set_cached, cache_stats
-from api.timing import timed_stage
-# New input validation imports
+from api.rag_service import query_knowledge_async
+from api.cache import cache_stats
 from api.validation import is_suspicious, sanitize_question
 
 # Setup logging
@@ -46,65 +42,30 @@ async def query(request: QueryRequest):
     if len(request.question.strip()) < 5:
         raise HTTPException(status_code=400, detail="Question is too short to process.")
 
-    # 2. Cache Lookup
-    timing = {}
-    cache_key = make_cache_key(request.question, request.top_k, request.source_filter)
-    cached_response = get_cached(cache_key)
-    if cached_response is not None:
-        logger.info(f"Cache hit: {request.question}")
-        return cached_response
-
-    # 3. Knowledge Retrieval
+    # 2. Knowledge retrieval + generation
     try:
-        with timed_stage("retrieval", timing):
-            chunks = retrieve(
-                question=request.question,
-                top_k=request.top_k,
-                source_filter=request.source_filter,
-            )
-    except Exception as e:
-        logger.error(f"Retrieval error: {e}")
-        raise HTTPException(status_code=503, detail="Retrieval service unavailable. Is Qdrant running?")
-
-    # Fallback if no data is found
-    if not chunks:
-        response = QueryResponse(
-            answer="No relevant documents found for your question.",
-            sources=[], 
-            question=request.question, 
-            chunks_used=0, 
-            timing_ms=timing,
+        result = await query_knowledge_async(
+            request.question,
+            top_k=request.top_k,
+            source_filter=request.source_filter,
         )
-        set_cached(cache_key, response)
-        return response
-
-    # 4. LLM Response Generation
-    try:
-        with timed_stage("generation", timing):
-            # Awaiting the async generation function
-            answer = await generate_answer_async(request.question, chunks)
     except Exception as e:
-        logger.error(f"Generation error: {e}")
-        raise HTTPException(status_code=503, detail=f"LLM generation failed: {str(e)}")
+        logger.error(f"RAG query error: {e}")
+        raise HTTPException(status_code=503, detail="RAG service unavailable.")
 
-    # Calculate performance execution times
-    timing["total"] = round(sum(v for k, v in timing.items() if k != "total"), 2)
-
-    # 5. Build Response & Cache
-    response = QueryResponse(
-        answer=answer, 
-        sources=chunks, 
+    return QueryResponse(
+        answer=result["answer"],
+        sources=[SourceChunk(**s) for s in result["sources"]],
         question=request.question,
-        chunks_used=len(chunks), 
-        timing_ms=timing,
+        chunks_used=result["chunks_used"],
+        timing_ms=result.get("timing_ms"),
     )
-    set_cached(cache_key, response)
-    return response
 
 
 @app.post("/sources", response_model=List[SourceChunk])
 def get_sources(request: QueryRequest):
     """Return raw retrieved chunks without LLM generation. Useful for explainability."""
+    from api.retriever import retrieve
     try:
         return retrieve(
             question=request.question,

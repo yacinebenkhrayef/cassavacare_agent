@@ -1,13 +1,8 @@
 # api/client.py
-import os
 from dataclasses import dataclass
 from typing import List, Optional
-import requests
-from qdrant_client import QdrantClient
 
-# Configuration loaded from environment variables
-QDRANT_HOST: str = os.getenv("QDRANT_HOST", "localhost")
-QDRANT_PORT: int = int(os.getenv("QDRANT_PORT", "6333"))
+from api.rag_service import query_knowledge
 
 
 @dataclass
@@ -19,54 +14,20 @@ class RAGAnswer:
 
 
 class CassavaRAGClient:
-    """Client for CassavaCare-Agent to consume the RAG API and interact with Qdrant directly."""
-
-    def __init__(
-        self,
-        base_url: str = "http://localhost:8000",
-        timeout: int = 30,
-        host: str = QDRANT_HOST,
-        port: int = QDRANT_PORT,
-        *args,
-        **kwargs,
-    ):
-        self.base_url = base_url.rstrip("/")
-        self.timeout = timeout
-        
-        # Initialize native Qdrant Client
-        self._client = QdrantClient(host=host, port=port, *args, **kwargs)
+    """In-process RAG client — retrieves from Qdrant and generates via Gemini."""
 
     def ask(self, question: str, top_k: int = 5, source_filter: Optional[str] = None) -> RAGAnswer:
         try:
-            # Build payload matching QueryRequest schema
-            payload = {
-                "query": question,  # Key must be 'query'
-                "top_k": top_k
-            }
-            if source_filter:
-                payload["source_filter"] = source_filter
-
-            resp = requests.post(
-                f"{self.base_url}/query",
-                json=payload,
-                timeout=self.timeout,
-            )
-            resp.raise_for_status()
-            data = resp.json()
+            data = query_knowledge(question, top_k, source_filter)
             return RAGAnswer(
                 answer=data["answer"],
                 sources=data.get("sources", []),
                 chunks_used=data.get("chunks_used", len(data.get("sources", []))),
                 timing_ms=data.get("timing_ms"),
             )
-        except requests.exceptions.Timeout:
-            return RAGAnswer(answer="The knowledge service timed out. Please try again.", sources=[], chunks_used=0)
-        except requests.exceptions.RequestException as e:
-            return RAGAnswer(answer=f"Knowledge service error: {e}", sources=[], chunks_used=0) 
-
-    def is_healthy(self) -> bool:
-        try:
-            resp = requests.get(f"{self.base_url}/health", timeout=5)
-            return resp.status_code == 200
-        except requests.exceptions.RequestException:
-            return False
+        except Exception as exc:
+            return RAGAnswer(
+                answer=f"Knowledge service error: {exc}",
+                sources=[],
+                chunks_used=0,
+            )

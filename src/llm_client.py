@@ -144,9 +144,12 @@ class GeminiClient:
             raise LLMResponseError("Gemini returned no candidates (likely a safety block).")
         candidate = response.candidates[0]
         finish_reason = getattr(candidate, "finish_reason", None)
-        if finish_reason is not None and str(finish_reason).split(".")[-1] != "STOP":
-            raise LLMResponseError(f"Gemini stopped early: {finish_reason}")
         text = (response.text or "").strip()
+        if finish_reason is not None and str(finish_reason).split(".")[-1] != "STOP":
+            if text:
+                logger.warning("Gemini stopped early (%s) — using partial output.", finish_reason)
+                return text
+            raise LLMResponseError(f"Gemini stopped early: {finish_reason}")
         if not text:
             raise LLMResponseError("Gemini returned an empty response.")
         return text

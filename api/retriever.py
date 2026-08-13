@@ -1,11 +1,16 @@
 # api/retriever.py
+import os
+from typing import List, Optional
+
 from qdrant_client import QdrantClient
 from qdrant_client.models import Filter, FieldCondition, MatchValue
 from sentence_transformers import SentenceTransformer
+
 from api.models import SourceChunk
-from typing import List, Optional
 
 COLLECTION_NAME = "cassavacare_docs"
+QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
+QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
 
 _client = None
 _model = None
@@ -13,7 +18,7 @@ _model = None
 def get_client() -> QdrantClient:
     global _client
     if _client is None:
-        _client = QdrantClient(host="localhost", port=6333)
+        _client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
     return _client
 
 def get_model() -> SentenceTransformer:
